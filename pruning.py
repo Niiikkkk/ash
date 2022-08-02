@@ -75,7 +75,7 @@ def pruning(use_gpu, use_tqdm):
             progress_bar = tqdm(total=len(dataset), leave=False)
 
         # apply ash
-        os.environ['ash_method'] = f'ash_p@{t}'
+        os.environ['ash_method'] = f'ash_p@{thresholds[t]}'
 
         with torch.no_grad():
             dataloader = DataLoader(dataset,
@@ -112,7 +112,7 @@ def pruning(use_gpu, use_tqdm):
             scores.append(acc1)
             wandb.log({
                 'acc': acc1,
-                'p': t
+                'p': thresholds[t]
             })
 
         plot = wandb_plot(thresholds, scores, x_axis="PRUNING_PERCENTAGE", y_axis="ACCURACY", title="ACCURACY DEGRADATION")

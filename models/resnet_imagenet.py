@@ -3,6 +3,7 @@ from typing import Type, Callable, Union, List, Optional
 import torch
 import torch.nn as nn
 from torch import Tensor
+
 from ash import apply_ash
 
 
@@ -66,7 +67,7 @@ class BasicBlock(nn.Module):
 
         out += identity
         if self.use_ash:
-            out = apply_ash(out)
+            out = apply_ash(out, method=getattr(self, 'ash_method'))
         out = self.relu(out)
 
         return out
@@ -131,7 +132,7 @@ class Bottleneck(nn.Module):
 
         out += identity
         if self.use_ash:
-            out = apply_ash(out)
+            out = apply_ash(out, method=getattr(self, 'ash_method'))
         out = self.relu(out)
 
         return out
@@ -171,13 +172,18 @@ class ResNet(nn.Module):
         self.bn1 = norm_layer(self.inplanes)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.layer1 = self._make_layer(block, 64, layers[0], use_ash=False)
+
+        use_ash = True if self.ash_layer is not None and self.ash_layer == 1 else False
+        self.layer1 = self._make_layer(block, 64, layers[0], use_ash=use_ash)
+        use_ash = True if self.ash_layer is not None and self.ash_layer == 2 else False
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2,
-                                       dilate=replace_stride_with_dilation[0], use_ash=False)
+                                       dilate=replace_stride_with_dilation[0], use_ash=use_ash)
+        use_ash = True if self.ash_layer is not None and self.ash_layer == 3 else False
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2,
-                                       dilate=replace_stride_with_dilation[1], use_ash=False)
+                                       dilate=replace_stride_with_dilation[1], use_ash=use_ash)
+        use_ash = True if self.ash_layer is not None and self.ash_layer == 4 else False
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2,
-                                       dilate=replace_stride_with_dilation[2], use_ash=False)
+                                       dilate=replace_stride_with_dilation[2], use_ash=use_ash)
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
@@ -243,7 +249,7 @@ class ResNet(nn.Module):
         x = self.layer3(x)
         x = self.layer4(x)
         x = self.avgpool(x)
-        x = apply_ash(x, method=getattr(self, 'ash_method'))
+        # x = apply_ash(x, method=getattr(self, 'ash_method'))
         x = torch.flatten(x, 1)
         x = self.fc(x)
         return x

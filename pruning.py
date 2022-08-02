@@ -115,10 +115,10 @@ def pruning(use_gpu, use_tqdm):
                 'p': thresholds[t]
             })
 
-        plot = wandb_plot(thresholds, scores, x_axis="PRUNING_PERCENTAGE", y_axis="ACCURACY", title="ACCURACY DEGRADATION")
-        wandb.log({
-            f'plt/accuracy_degradation': plot,
-        })
+    plot = wandb_plot(thresholds, scores, x_axis="PRUNING_PERCENTAGE", y_axis="ACCURACY", title="ACCURACY DEGRADATION")
+    wandb.log({
+        f'plt/accuracy_degradation': plot,
+    })
 
 
 if __name__ == "__main__":

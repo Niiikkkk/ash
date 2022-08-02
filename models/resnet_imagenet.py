@@ -1,3 +1,4 @@
+import os
 from typing import Type, Callable, Union, List, Optional
 
 import torch
@@ -67,7 +68,7 @@ class BasicBlock(nn.Module):
 
         out += identity
         if self.use_ash:
-            out = apply_ash(out, method=getattr(self, 'ash_method'))
+            out = apply_ash(out, method=os.getenv('ash_method'))
         out = self.relu(out)
 
         return out
@@ -132,7 +133,7 @@ class Bottleneck(nn.Module):
 
         out += identity
         if self.use_ash:
-            out = apply_ash(out, method=getattr(self, 'ash_method'))
+            out = apply_ash(out, method=os.getenv('ash_method'))
         out = self.relu(out)
 
         return out

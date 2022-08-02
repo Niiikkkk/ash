@@ -75,7 +75,7 @@ def pruning(use_gpu, use_tqdm):
             progress_bar = tqdm(total=len(dataset), leave=False)
 
         # apply ash
-        setattr(model, 'ash_method', f'ash_p@{t}')
+        os.environ['ash_method'] = f'ash_p@{t}'
 
         with torch.no_grad():
             dataloader = DataLoader(dataset,

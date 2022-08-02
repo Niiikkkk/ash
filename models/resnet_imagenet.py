@@ -173,15 +173,16 @@ class ResNet(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
-        use_ash = True if self.ash_layer is not None and self.ash_layer == 1 else False
+        ash_layer = getattr(self, 'ash_layer')
+        use_ash = True if ash_layer == 1 else False
         self.layer1 = self._make_layer(block, 64, layers[0], use_ash=use_ash)
-        use_ash = True if self.ash_layer is not None and self.ash_layer == 2 else False
+        use_ash = True if ash_layer == 2 else False
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2,
                                        dilate=replace_stride_with_dilation[0], use_ash=use_ash)
-        use_ash = True if self.ash_layer is not None and self.ash_layer == 3 else False
+        use_ash = True if ash_layer == 3 else False
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2,
                                        dilate=replace_stride_with_dilation[1], use_ash=use_ash)
-        use_ash = True if self.ash_layer is not None and self.ash_layer == 4 else False
+        use_ash = True if ash_layer == 4 else False
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2,
                                        dilate=replace_stride_with_dilation[2], use_ash=use_ash)
 

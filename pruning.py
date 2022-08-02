@@ -42,11 +42,13 @@ def pruning(use_gpu, use_tqdm):
         'train_restore_file': 'resnet50-19c8e357.pth',
         'batch_size': 200,
     }
+
     # init wandb
     wandb.init(project="ash",
                dir=os.getenv("LOG"),
                config=config,
-               name='PRUNING')
+               name='LAYER1',
+               tags=['PRUNING'])
 
     # construct the model
     num_classes = get_num_classes(config['dataset_name'])
@@ -66,54 +68,56 @@ def pruning(use_gpu, use_tqdm):
     if use_gpu:
         model = model.cuda()
 
-    for layer in [1, 2, 3, 4]:
-        setattr(model, 'ash_layer', layer)
-        thresholds = np.array([70, 80, 85, 90, 92, 94, 96, 98, 99, 100])
-        scores = []
-        for t in range(thresholds.shape[0]):
-            if use_tqdm:
-                progress_bar = tqdm(total=len(dataset), leave=False)
+    thresholds = np.array([70, 80, 85, 90, 92, 94, 96, 98, 99, 100])
+    scores = []
+    for t in range(thresholds.shape[0]):
+        if use_tqdm:
+            progress_bar = tqdm(total=len(dataset), leave=False)
 
-            # apply ash
-            setattr(model, 'ash_method', f'ash_p@{t}')
+        # apply ash
+        setattr(model, 'ash_method', f'ash_p@{t}')
 
-            with torch.no_grad():
-                dataloader = DataLoader(dataset,
-                                        batch_size=config.get("batch_size"),
-                                        **kwargs)
-                gt = list()
-                p = list()
-                for i, samples in enumerate(dataloader):
-                    # if i >= 2:
-                    #     break
-                    images = samples[0]
-                    labels = samples[1]
+        with torch.no_grad():
+            dataloader = DataLoader(dataset,
+                                    batch_size=config.get("batch_size"),
+                                    **kwargs)
+            gt = list()
+            p = list()
+            for i, samples in enumerate(dataloader):
+                # if i >= 2:
+                #     break
+                images = samples[0]
+                labels = samples[1]
 
-                    # Create non_blocking tensors for distributed training
-                    if use_gpu:
-                        images = images.cuda(non_blocking=True)
-                        labels = labels.cuda(non_blocking=True)
+                # Create non_blocking tensors for distributed training
+                if use_gpu:
+                    images = images.cuda(non_blocking=True)
+                    labels = labels.cuda(non_blocking=True)
 
-                    outputs = model(images)
-                    _, predicted = torch.max(outputs, dim=1)
+                outputs = model(images)
+                _, predicted = torch.max(outputs, dim=1)
 
-                    gt.append(labels.detach().cpu().numpy())
-                    p.append(predicted.detach().cpu().numpy())
-
-                    if use_tqdm:
-                        progress_bar.update(images.size(0))
+                gt.append(labels.detach().cpu().numpy())
+                p.append(predicted.detach().cpu().numpy())
 
                 if use_tqdm:
-                    progress_bar.close()
+                    progress_bar.update(images.size(0))
 
-                gt = np.concatenate(gt)
-                p = np.concatenate(p)
-                acc1 = accuracy_score(gt, p)
-                scores.append(acc1)
+            if use_tqdm:
+                progress_bar.close()
+
+            gt = np.concatenate(gt)
+            p = np.concatenate(p)
+            acc1 = accuracy_score(gt, p)
+            scores.append(acc1)
+            wandb.log({
+                'acc': acc1,
+                'p': t
+            })
 
         plot = wandb_plot(thresholds, scores, x_axis="PRUNING_PERCENTAGE", y_axis="ACCURACY", title="ACCURACY DEGRADATION")
         wandb.log({
-            f'plt/layer{layer}': plot,
+            f'plt/accuracy_degradation': plot,
         })
 
 

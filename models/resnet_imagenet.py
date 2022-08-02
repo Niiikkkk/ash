@@ -173,18 +173,13 @@ class ResNet(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
-        ash_layer = getattr(self, 'ash_layer')
-        use_ash = True if ash_layer == 1 else False
-        self.layer1 = self._make_layer(block, 64, layers[0], use_ash=use_ash)
-        use_ash = True if ash_layer == 2 else False
+        self.layer1 = self._make_layer(block, 64, layers[0], use_ash=True)
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2,
-                                       dilate=replace_stride_with_dilation[0], use_ash=use_ash)
-        use_ash = True if ash_layer == 3 else False
+                                       dilate=replace_stride_with_dilation[0], use_ash=False)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2,
-                                       dilate=replace_stride_with_dilation[1], use_ash=use_ash)
-        use_ash = True if ash_layer == 4 else False
+                                       dilate=replace_stride_with_dilation[1], use_ash=False)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2,
-                                       dilate=replace_stride_with_dilation[2], use_ash=use_ash)
+                                       dilate=replace_stride_with_dilation[2], use_ash=False)
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)

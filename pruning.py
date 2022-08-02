@@ -68,7 +68,7 @@ def pruning(use_gpu, use_tqdm):
     if use_gpu:
         model = model.cuda()
 
-    thresholds = np.array([70, 80, 85, 90, 92, 94, 96, 98, 99, 100])
+    thresholds = np.array([80, 85, 90, 92, 94, 96, 98, 99, 100])
     scores = []
     for t in range(thresholds.shape[0]):
         if use_tqdm:

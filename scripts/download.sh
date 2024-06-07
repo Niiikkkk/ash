@@ -1,4 +1,5 @@
 # download large scale ood datasets
+"""
 wget -P ${DATASETS} http://pages.cs.wisc.edu/~huangrui/imagenet_ood_dataset/iNaturalist.tar.gz
 wget -P ${DATASETS} http://pages.cs.wisc.edu/~huangrui/imagenet_ood_dataset/SUN.tar.gz
 wget -P ${DATASETS} http://pages.cs.wisc.edu/~huangrui/imagenet_ood_dataset/Places.tar.gz
@@ -50,7 +51,7 @@ tar -xf ${DATASETS}/test_256.tar -C ${PLACES365_DATASET_DIR}
 tar -xvf ${DATASETS}/ILSVRC2012_img_val.tar -C ${IMAGENET_DATASET_DIR}
 cd ${IMAGENET_DATASET_DIR}
 wget -qO- https://raw.githubusercontent.com/soumith/imagenetloader.torch/master/valprep.sh | bash
-
+"""
 # download checkpoints
-wget -P ${MODELS} https://www.dropbox.com/s/o5r3t3f0uiqdmpm/checkpoints.zip
-unzip -j ${MODELS}/checkpoints.zip -d ${MODELS}
+wget -P /home/nberardo/ash/checkpoints https://www.dropbox.com/s/o5r3t3f0uiqdmpm/checkpoints.zip
+unzip -j /home/nberardo/ash/checkpoints/checkpoints.zip -d $/home/nberardo/ash/checkpoints

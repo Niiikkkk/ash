@@ -8,7 +8,8 @@ from utils.svhn_loader import SVHN
 
 
 def build_dataset(dataset_name, transform, train=False):
-    dataset_dir = os.getenv('DATASETS')
+    dataset_dir = "/home/nberardo/Datasets/ood/"
+    imagenet_dir = "/home/eaiello/ImageNet/"
 
     # cifar10
     if dataset_name == "cifar10":
@@ -76,8 +77,7 @@ def build_dataset(dataset_name, transform, train=False):
     # imagenet
     if dataset_name == "imagenet":
         mode_path = "train" if train else "val"
-        external_disk = os.getenv('EXTERNAL_DRIVE') if os.getenv('EXTERNAL_DRIVE') else dataset_dir
-        dataset = torchvision.datasets.ImageFolder(os.path.join(external_disk, 'imagenet', mode_path), transform=transform)
+        dataset = torchvision.datasets.ImageFolder(os.path.join(imagenet_dir, mode_path), transform=transform)
         return dataset
 
     if dataset_name == 'inaturalist':

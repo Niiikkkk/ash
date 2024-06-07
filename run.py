@@ -11,6 +11,7 @@ from ood_eval import ood_eval
 from utils.utils import is_debug_session
 
 
+
 def cifar100_vs_cifar10():
     config = {
         "id_dataset": "cifar100",

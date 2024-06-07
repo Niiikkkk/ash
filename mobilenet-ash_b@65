@@ -1,0 +1,16 @@
+INFO: localdir at /scratch/968887.nberardo
+INFO: your job will run on local system.
+Processing imagenet dataset.
+Processing inaturalist dataset.
+Processing sun dataset.
+Processing places dataset.
+Processing textures dataset.
+ash_b@65 - energy - imagenet
+ OOD detection method: energy
+              FPR    AUROC  AUIN  
+inaturalist   31.16  94.32  98.77
+sun           38.68  91.58  97.98
+places        51.92  87.52  96.92
+textures      21.15  95.05  99.30
+AVG           35.73  92.12  98.24
+FNR:   5.00, Acc:  70.48, End-to-end Acc:  68.94

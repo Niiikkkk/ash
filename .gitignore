@@ -4,3 +4,4 @@ __pycache__
 *.ray.lock
 wandb/
 output/
+checkpoints/
